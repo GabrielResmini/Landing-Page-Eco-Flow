@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="O EcoFlow compara imagens de satélite da sua propriedade, detecta desmatamento e queimadas e avisa a gestão antes que o problema cresça.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="EcoFlow — Tecnologia monitora, natureza permanece">
+  <meta property="og:description" content="Monitoramento ambiental por satélite: desenhe sua área e receba alertas de desmatamento, queimadas e alterações na vegetação.">
+  <meta property="og:locale" content="pt_BR">
+  <title>EcoFlow — Tecnologia monitora, natureza permanece</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #f3f1e8;
+      --ink: #14180f;
+      --mute: #5d6354;
+      --line: #d6d3c4;
+      --g: #0b6b1f;
+      --g2: #1c8a2f;
+      --on-g: #ffffff;
+      --card: #fbfaf4;
+      --shadow: 0 8px 24px -8px rgba(20, 24, 15, 0.12);
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0e120c;
+        --ink: #ecebe0;
+        --mute: #98a08c;
+        --line: #2a3024;
+        --g: #5fd37a;
+        --g2: #3fb85c;
+        --on-g: #06210f;
+        --card: #151a12;
+        --shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --on-g: #06210f;
+      --bg: #0e120c;
+      --ink: #ecebe0;
+      --mute: #98a08c;
+      --line: #2a3024;
+      --g: #5fd37a;
+      --g2: #3fb85c;
+      --card: #151a12;
+      --shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font: 400 17px/1.55 "Bricolage Grotesque", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .w {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .mono {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--mute);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    header .w {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 64px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 22px;
+      text-decoration: none;
+      letter-spacing: -.02em;
+    }
+
+    .logo b {
+      color: var(--g);
+    }
+
+    nav {
+      display: flex;
+      gap: 26px;
+      align-items: center;
+      font-size: 15px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--mute);
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--ink);
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--bg);
+      padding: 14px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: transform 0.15s, box-shadow 0.2s;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px -2px rgba(0,0,0,0.15);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px -4px rgba(0,0,0,0.2);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--g);
+      outline-offset: 2px;
+    }
+
+    .btn.g {
+      background: var(--g);
+      color: var(--on-g);
+    }
+
+    .btn.o {
+      background: none;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      box-shadow: none;
+    }
+
+    .btn.o:hover {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    nav .btn {
+      padding: 9px 16px;
+      font-size: 14px;
+      color: var(--bg);
+    }
+
+    .hero {
+      padding: 72px 0 56px;
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 7vw, 84px);
+      line-height: .98;
+      letter-spacing: -.035em;
+      font-weight: 800;
+      max-width: 15ch;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--g);
+    }
+
+    .hero p.lead {
+      max-width: 52ch;
+      margin: 28px 0 32px;
+      font-size: 20px;
+      color: var(--mute);
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .band {
+      border-block: 1px solid var(--line);
+      padding: 44px 0;
+    }
+
+    .band .w {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .big {
+      font-size: clamp(64px, 11vw, 132px);
+      font-weight: 800;
+      letter-spacing: -.05em;
+      line-height: .9;
+      color: var(--g);
+    }
+
+    section {
+      padding: 88px 0;
+    }
+
+    h2 {
+      font-size: clamp(30px, 4.4vw, 52px);
+      letter-spacing: -.03em;
+      line-height: 1.05;
+      font-weight: 800;
+      max-width: 20ch;
+    }
+
+    .sub {
+      max-width: 56ch;
+      color: var(--mute);
+      margin-top: 16px;
+    }
+
+    .causes {
+      margin-top: 44px;
+      border-top: 1px solid var(--ink);
+    }
+
+    .cause {
+      display: grid;
+      grid-template-columns: 70px 1fr 1.3fr;
+      gap: 20px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: baseline;
+    }
+
+    .cause b {
+      font-size: 22px;
+      letter-spacing: -.01em;
+    }
+
+    .cause span {
+      color: var(--mute);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .step {
+      padding: 30px;
+      border-right: 1px solid var(--line);
+      background: var(--card);
+    }
+
+    .step:last-child {
+      border: 0;
+    }
+
+    .step h3 {
+      font-size: 22px;
+      margin: 14px 0 8px;
+      letter-spacing: -.01em;
+    }
+
+    .step p {
+      color: var(--mute);
+      font-size: 16px;
+    }
+
+    /* mock screens & images */
+    .scr {
+      background: #0b120c;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .5);
+      border: 1px solid #1d2a1f;
+      color: #d7e6d9;
+      font: 13px/1.4 system-ui, sans-serif;
+    }
+
+    .bar {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid #1d2a1f;
+      background: #0e1710;
+    }
+
+    .bar i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #2b3a2d;
+    }
+
+    .bar span {
+      margin-left: 10px;
+      font-size: 11px;
+      color: #6fe08a;
+      border: 1px solid #1e5a2c;
+      border-radius: 20px;
+      padding: 1px 9px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      min-height: 340px;
+    }
+
+    .side {
+      border-right: 1px solid #1d2a1f;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .side div {
+      padding: 7px 10px;
+      border-radius: 6px;
+      color: #8ba08e;
+    }
+
+    .side .on {
+      background: #12301a;
+      color: #4ee26f;
+    }
+
+    .main {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .kp {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .kp div {
+      background: #101a12;
+      border: 1px solid #1d2a1f;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .kp b {
+      display: block;
+      font-size: 22px;
+    }
+
+    .kp small {
+      color: #7f947f;
+      font-size: 11px;
+    }
+
+    .pan {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 8px;
+    }
+
+    .pan > div {
+      background: #101a12;
+      border: 1px solid #1d2a1f;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .donut {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      margin: 8px auto 0;
+      background: conic-gradient(#ff4141 0 25%, #ff8a00 25% 75%, #c6e400 75%);
+      -webkit-mask: radial-gradient(circle 28px, transparent 98%, #000 100%);
+      mask: radial-gradient(circle 28px, transparent 98%, #000 100%);
+    }
+
+    .act {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-top: 1px solid #1d2a1f;
+      color: #9db39f;
+      font-size: 12px;
+    }
+
+    .act em {
+      font-style: normal;
+      color: #ff9a2e;
+      font-size: 11px;
+    }
+
+    .shots {
+      display: grid;
+      gap: 44px;
+      margin-top: 44px;
+    }
+
+    .shot-full {
+      display: grid;
+      gap: 16px;
+    }
+
+    .shot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .img-container {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      background: var(--card);
+    }
+
+    .img-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .cap {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .cap b {
+      font-size: 16px;
+    }
+
+    .cap span {
+      color: var(--mute);
+      font-size: 14px;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 44px;
+      align-items: stretch;
+    }
+
+    .plan {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s;
+    }
+
+    .plan:hover {
+      transform: translateY(-4px);
+    }
+
+    .plan.hot {
+      background: var(--g);
+      color: var(--on-g);
+      border-color: var(--g);
+    }
+
+    .plan h3 {
+      font-size: 15px;
+      font-family: "IBM Plex Mono", monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .price {
+      font-size: 54px;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      margin: 14px 0 4px;
+      line-height: 1;
+    }
+
+    .price small {
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0;
+      opacity: .75;
+    }
+
+    .price sup {
+      font-size: 20px;
+      vertical-align: top;
+      margin-right: 4px;
+      font-weight: 600;
+    }
+
+    .plan ul {
+      list-style: none;
+      padding: 0;
+      margin: 22px 0 28px;
+      border-top: 1px solid currentColor;
+      border-color: color-mix(in srgb, currentColor 25%, transparent);
+    }
+
+    .plan li {
+      padding: 12px 0;
+      border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+      font-size: 16px;
+    }
+
+    .plan .btn {
+      margin-top: auto;
+      text-align: center;
+    }
+
+    .plan.hot .btn {
+      background: #fff;
+      color: #0b3d17;
+    }
+
+    .cta {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 96px 0;
+      text-align: center;
+    }
+
+    .cta h2 {
+      margin: 0 auto 28px;
+      max-width: 22ch;
+    }
+
+    .cta .btn {
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    footer {
+      padding: 28px 0;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-top: 1px solid var(--line);
+      margin-top: 44px;
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--mute);
+      cursor: pointer;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--g);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 860px) {
+      nav a:not(.btn) {
+        display: none;
+      }
+
+      .band .w,
+      .steps,
+      .plans,
+      .shot-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .step {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .cause {
+        grid-template-columns: 40px 1fr;
+      }
+
+      .cause span {
+        grid-column: 2;
+      }
+
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        display: none;
+      }
+
+      .kp {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pan {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 60px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="w">
+      <a class="logo" href="#">eco<b>Flow</b></a>
+      <nav>
+        <a href="#problema">Problema</a>
+        <a href="#produto">Produto</a>
+        <a href="#telas">Telas</a>
+        <a href="#planos">Planos</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">Tema</button>
+        <a class="btn" href="https://eco-flow-radar.web.app/">Acessar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="w hero">
+      <p class="mono" style="margin-bottom:22px">Monitoramento ambiental por satélite</p>
+      <h1>O meio ambiente não pode esperar a informação chegar ao <em>escritório.</em></h1>
+      <p class="lead">O EcoFlow compara imagens de satélite da sua propriedade, detecta desmatamento, queimadas e alterações na vegetação, e avisa a gestão antes que o problema cresça.</p>
+      <div class="row">
+        <a class="btn g" href="https://eco-flow-radar.web.app/">Testar o EcoFlow</a>
+        <a class="btn o" href="#planos">Ver planos</a>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="w">
+        <div class="big">+60 mil</div>
+        <p style="font-size:22px;max-width:30ch;letter-spacing:-.01em">
+          empresas reportam dados ambientais ao Ibama. Quando esses dados ficam dispersos, a ação demora.
+          <span class="mono" style="display:block;margin-top:8px">Fonte do número: IBAMA — RAPP</span>
+        </p>
+      </div>
+    </div>
+
+    <section id="problema">
+      <div class="w">
+        <p class="mono">O problema</p>
+        <h2 style="margin-top:10px">Analisar imagem de satélite na mão leva tempo demais.</h2>
+        <div class="causes">
+          <div class="cause">
+            <span class="mono">01</span>
+            <b>Segmentação de dados</b>
+            <span>Os dados ficam em sistemas e canais separados.</span>
+          </div>
+          <div class="cause">
+            <span class="mono">02</span>
+            <b>Inconsistência operacional</b>
+            <span>Falta padronização do fluxo de trabalho.</span>
+          </div>
+          <div class="cause">
+            <span class="mono">03</span>
+            <b>Desconexão campo-gestão</b>
+            <span>A informação de campo demora a chegar à gestão.</span>
+          </div>
+          <div class="cause">
+            <span class="mono">04</span>
+            <b>Falta de automação</b>
+            <span>Os processos ainda são manuais.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="produto" style="padding-top:0">
+      <div class="w">
+        <p class="mono">O produto</p>
+        <h2 style="margin-top:10px">Análises ágeis, automação e escala numa única plataforma.</h2>
+        <p class="sub">Você desenha a área, o EcoFlow cuida do resto: busca as imagens mais recentes do Copernicus, compara com as anteriores e destaca o que mudou.</p>
+        <div class="steps">
+          <div class="step">
+            <span class="mono">Passo 1</span>
+            <h3>Desenhe sua área</h3>
+            <p>Marque o perímetro de fazendas, reservas ou barragens direto no mapa. Cada área fica salva na plataforma e pode ser exportada em GeoJSON.</p>
+          </div>
+          <div class="step">
+            <span class="mono">Passo 2</span>
+            <h3>Comparamos antes e depois</h3>
+            <p>Imagens Sentinel-2 passam pelo índice NDVI, que mede a saúde da vegetação. Queda brusca no índice vira suspeita de desmatamento ou queimada.</p>
+          </div>
+          <div class="step">
+            <span class="mono">Passo 3</span>
+            <h3>Receba o alerta</h3>
+            <p>As alterações aparecem no painel por gravidade e tipo, com verificação visual, histórico, auditoria das análises e relatórios em HTML.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="telas" style="padding-top:0">
+      <div class="w">
+        <p class="mono">Telas do MVP</p>
+        <h2 style="margin-top:10px">Do alerta à imagem, sem trocar de ferramenta.</h2>
+        
+        <div class="shots">
+          <!-- Dashboard (tela cheia) -->
+          <div class="shot-full">
+            <div class="scr" role="img" aria-label="Tela do dashboard do EcoFlow">
+              <div class="bar">
+                <i></i><i></i><i></i>
+                <span>MODO REAL (Copernicus)</span>
+              </div>
+              <div class="app">
+                <div class="side">
+                  <div class="on">Dashboard</div>
+                  <div>Mapa</div>
+                  <div>Áreas Monitoradas</div>
+                  <div>Alertas</div>
+                  <div>Verificação Visual</div>
+                  <div>Análises</div>
+                  <div>Histórico</div>
+                  <div>Relatórios</div>
+                </div>
+                <div class="main">
+                  <div class="kp">
+                    <div><b>5</b><small>Áreas monitoradas</small></div>
+                    <div><b style="color:#4ee26f">2</b><small>Áreas normais</small></div>
+                    <div><b style="color:#c6e400">3</b><small>Alterações detectadas</small></div>
+                    <div><b style="color:#ff4141">0</b><small>Alertas críticos</small></div>
+                  </div>
+                  <div class="pan">
+                    <div>
+                      <small style="color:#7f947f">Alterações por período</small>
+                      <svg viewBox="0 0 220 80" width="100%" height="80" aria-hidden="true">
+                        <path d="M0 70H80Q90 8 100 70H150Q158 8 166 70H178Q184 10 220 10" fill="none" stroke="#2fe07a" stroke-width="2"/>
+                        <path d="M178 70Q184 10 220 10V70Z" fill="#ff8a00" opacity=".25"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <small style="color:#7f947f">Distribuição por tipo</small>
+                      <div class="donut"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="act"><span>Reserva Norte — possível área queimada</span><em>ALTA</em></div>
+                    <div class="act"><span>Área Rural 034 — redução do NDVI</span><em>ALTA</em></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cap">
+              <b>Dashboard</b>
+              <span>Visão geral de áreas, alertas e atividade recente.</span>
+            </div>
+          </div>
+
+          <!-- Mapa e NDVI lado a lado -->
+          <div class="shot-grid">
+            <div>
+              <div class="img-container">
+                <img src="../LP-MVP/Imagens/imagem-mvp.jpg" alt="Mapa com destaque em áreas alteradas">
+              </div>
+              <div class="cap">
+                <b>Áreas personalizadas</b>
+                <span>Desenhe barragens, fazendas ou reservas direto no mapa.</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="img-container">
+                <img src="../LP-MVP/Imagens/NVDI.png" alt="Comparação visual dos índices NDVI">
+              </div>
+              <div class="cap">
+                <b>Análise NDVI</b>
+                <span>Comparação visual dos índices de vegetação e regiões detectadas.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="planos" style="padding-top:0">
+      <div class="w">
+        <p class="mono">Planos · modelo B2B para empresas com responsabilidade ambiental</p>
+        <h2 style="margin-top:10px">Preço claro, do primeiro hectare à operação inteira.</h2>
+        <div class="plans">
+          <div class="plan">
+            <h3>Básico</h3>
+            <div class="price"><sup>R$</sup>99,99<small> /mês</small></div>
+            <ul>
+              <li>Uso de dados reais da propriedade.</li>
+              <li>Relatórios em HTML e áreas exportáveis em GeoJSON.</li>
+              <li>Histórico e auditoria completos das análises.</li>
+            </ul>
+            <a class="btn" href="https://eco-flow-radar.web.app/">Começar</a>
+          </div>
+
+          <div class="plan hot">
+            <h3>Premium</h3>
+            <div class="price"><sup>R$</sup>349,99<small> /mês</small></div>
+            <ul>
+              <li>Até 30 áreas e 5.000 hectares monitorados.</li>
+              <li>Análises semanais para identificar alterações mais rápido.</li>
+              <li>Organização de múltiplas propriedades em uma única plataforma.</li>
+            </ul>
+            <a class="btn" href="https://eco-flow-radar.web.app/">Começar</a>
+          </div>
+
+          <div class="plan">
+            <h3>Enterprise</h3>
+            <div class="price"><sup>R$</sup>1.199,99<small> /mês</small></div>
+            <ul>
+              <li>Áreas e hectares sob medida, sem limite fixo.</li>
+              <li>Monitoramento diário de alertas, conforme disponibilidade de dados.</li>
+              <li>Atendimento prioritário.</li>
+            </ul>
+            <a class="btn" href="https://eco-flow-radar.web.app/">Começar</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta">
+      <div class="w">
+        <h2>Tecnologia monitora, natureza permanece.</h2>
+        <a class="btn" href="https://eco-flow-radar.web.app/">Acessar o EcoFlow</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="w">
+    <footer>
+      <span class="logo">eco<b>Flow</b></span>
+      <span class="mono">Grupo 17 · Hackathon 2026</span>
+    </footer>
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') html.setAttribute('data-theme', saved);
+    } catch (e) {}
+
+    themeToggle.addEventListener('click', () => {
+      const attr = html.getAttribute('data-theme');
+      const current = attr || (media.matches ? 'dark' : 'light');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  </script>
+
+</body>
+</html>
