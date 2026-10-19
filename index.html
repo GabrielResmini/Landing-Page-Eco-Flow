@@ -293,11 +293,8 @@
       try { localStorage.setItem('theme', next); } catch (e) {}
     });
 
-    // Formulário de contato
-    // Cole aqui o endereço de envio do seu serviço de formulários
-    // (ex.: Formspree, Getform, Web3Forms). Enquanto estiver vazio,
-    // o formulário valida os campos mas avisa que o envio não está ativo.
-    const FORM_ENDPOINT = '';
+    // Formulário de contato (envio via Formspree)
+    const FORM_ENDPOINT = 'https://formspree.io/f/xbgdeoev';
 
     const form = document.getElementById('contactForm');
     const statusEl = document.getElementById('formStatus');
