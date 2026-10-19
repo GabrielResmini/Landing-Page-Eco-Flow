@@ -25,6 +25,7 @@
         <a href="#produto">Produto</a>
         <a href="#telas">Telas</a>
         <a href="#planos">Planos</a>
+        <a href="#contato">Contato</a>
         <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">Tema</button>
         <a class="btn" href="https://eco-flow-radar.web.app/">Acessar</a>
       </nav>
@@ -230,6 +231,35 @@
       </div>
     </section>
 
+    <section id="contato" style="padding-top:0">
+      <div class="w">
+        <p class="mono">Contato</p>
+        <h2 style="margin-top:10px">Fale com a gente.</h2>
+        <p class="sub">Tem dúvidas sobre os planos ou quer ver o EcoFlow na sua propriedade? Envie uma mensagem e retornamos em breve.</p>
+
+        <form class="contact" id="contactForm" novalidate>
+          <div class="field">
+            <label for="cf-nome">Nome</label>
+            <input type="text" id="cf-nome" name="nome" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="cf-email">E-mail</label>
+            <input type="email" id="cf-email" name="email" autocomplete="email" required>
+          </div>
+          <div class="field full">
+            <label for="cf-mensagem">Mensagem</label>
+            <textarea id="cf-mensagem" name="mensagem" rows="5" required></textarea>
+          </div>
+          <!-- campo anti-spam: deve ficar vazio -->
+          <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="field full form-actions">
+            <button class="btn g" type="submit">Enviar mensagem</button>
+            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+    </section>
+
     <div class="cta">
       <div class="w">
         <h2>Tecnologia monitora, natureza permanece.</h2>
@@ -261,6 +291,55 @@
       const next = current === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
       try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+
+    // Formulário de contato
+    // Cole aqui o endereço de envio do seu serviço de formulários
+    // (ex.: Formspree, Getform, Web3Forms). Enquanto estiver vazio,
+    // o formulário valida os campos mas avisa que o envio não está ativo.
+    const FORM_ENDPOINT = '';
+
+    const form = document.getElementById('contactForm');
+    const statusEl = document.getElementById('formStatus');
+
+    function setStatus(msg, type) {
+      statusEl.textContent = msg;
+      statusEl.className = 'form-status' + (type ? ' ' + type : '');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (form.website.value) return; // honeypot preenchido: provável bot
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      if (!FORM_ENDPOINT) {
+        setStatus('O envio ainda não está configurado. Tente novamente mais tarde.', 'err');
+        return;
+      }
+
+      const btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      setStatus('Enviando…');
+
+      try {
+        const res = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        form.reset();
+        setStatus('Mensagem enviada! Obrigado pelo contato.', 'ok');
+      } catch (err) {
+        setStatus('Não foi possível enviar agora. Tente novamente em instantes.', 'err');
+      } finally {
+        btn.disabled = false;
+      }
     });
   </script>
 

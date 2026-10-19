@@ -551,6 +551,97 @@ h2 {
   color: #0b3d17;
 }
 
+/* Formulário de contato */
+.contact {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 44px;
+  max-width: 760px;
+  padding: 32px 28px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.contact .field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact .field.full {
+  grid-column: 1 / -1;
+}
+
+.contact label {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.contact input,
+.contact textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.contact textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact input:focus-visible,
+.contact textarea:focus-visible {
+  outline: none;
+  border-color: var(--g);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--g) 25%, transparent);
+}
+
+.contact .hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.form-actions {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-status {
+  font-size: 15px;
+  color: var(--mute);
+}
+
+.form-status.ok {
+  color: var(--g);
+}
+
+.form-status.err {
+  color: #c0392b;
+}
+
 .cta {
   background: var(--ink);
   color: var(--bg);
@@ -611,8 +702,13 @@ footer {
   .band .w,
   .steps,
   .plans,
-  .shot-grid {
+  .shot-grid,
+  .contact {
     grid-template-columns: 1fr;
+  }
+
+  .contact {
+    padding: 24px 20px;
   }
 
   .step {
